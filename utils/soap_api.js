@@ -25,35 +25,54 @@ require("dotenv").config();
 
 module.exports = {
 
-    isMsisdnActive : async (msisdn) =>{
-        const url = "http://172.25.39.13:3004";
-        const sampleHeaders = {
-            'User-Agent': 'NodeApp',
-            'Content-Type': 'text/xml;charset=UTF-8',
-            'SOAPAction': 'urn:CCSCD1_QRY',
-        };
+    isMsisdnActive: async (msisdn) => {
 
-        let getBalancexml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pi="http://xmlns.oracle.com/communications/ncc/2009/05/15/pi">
+
+        try {
+            const url = "http://172.25.39.16:2222";
+            const sampleHeaders = {
+                'User-Agent': 'NodeApp',
+                'Content-Type': 'text/xml;charset=UTF-8',
+                'SOAPAction': 'http://SCLINSMSVM01P/wsdls/Surfline/MGMGetReferralAcctInfo/MGMGetReferralAcctInfo',
+                'Authorization': 'Basic YWlhb3NkMDE6YWlhb3NkMDE='
+            };
+
+            let xmlBody = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mgm="http://SCLINSMSVM01P/wsdls/Surfline/MGMGetReferralAcctInfo.wsdl">
    <soapenv:Header/>
    <soapenv:Body>
-      <pi:CCSCD1_QRY>
-         <pi:username>${process.env.PI_USER}</pi:username>
-         <pi:password>${process.env.PI_PASS}</pi:password>
-         <pi:MSISDN>${msisdn}</pi:MSISDN>
-         <pi:LIST_TYPE>STATUS</pi:LIST_TYPE>
-      </pi:CCSCD1_QRY>
+      <mgm:MGMGetReferralAcctInfoRequest>
+         <CC_Calling_Party_Id>${msisdn}</CC_Calling_Party_Id>
+      </mgm:MGMGetReferralAcctInfoRequest>
    </soapenv:Body>
 </soapenv:Envelope>`;
 
-        const {response} = await soapRequest({url: url, headers: sampleHeaders, xml: getBalancexml, timeout: 5000}); // Optional timeout parameter(milliseconds)
-        const {body} = response;
-        let jsonObj = parser.parse(body, options);
-        const soapResponseBody = jsonObj.Envelope.Body;
-        if (!soapResponseBody.Fault) {
-            const status = soapResponseBody.CCSCD1_QRYResponse.STATUS;
-            if (status === 'A' || status === 'D') return true
+
+            const {response} = await soapRequest({url: url, headers: sampleHeaders, xml: xmlBody, timeout: 5000});
+            const {body} = response;
+            let jsonObj = parser.parse(body, options);
+            let jsonResult = jsonObj.Envelope.Body;
+            let result = {}
+            if (jsonResult.MGMGetReferralAcctInfoResult && jsonResult.MGMGetReferralAcctInfoResult.Result) {
+                result.contact = jsonResult.MGMGetReferralAcctInfoResult.Result
+                result.success = true;
+
+
+            } else {
+                result.contact = null;
+                result.success = false;
+
+            }
+            return result;
+
+        } catch (error) {
+            console.log(error.toString())
+            return {
+                contact: null,
+                success: false,
+            }
+
         }
-        return false
 
     }
+
 }

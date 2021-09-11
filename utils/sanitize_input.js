@@ -20,7 +20,7 @@ module.exports = {
 
     formatMSISDN: (msisdn) => {
 
-        if (msisdn.charAt(0) === '0') msisdn = msisdn.substr(1);
+        if (msisdn.charAt(0) === '0') msisdn = msisdn.substring(1);
         return `233${msisdn}`;
 
     },

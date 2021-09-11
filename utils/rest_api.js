@@ -1,6 +1,10 @@
 const axios = require('axios')
+const config  =require("./config")
 
 require("dotenv").config();
+
+
+
 
 module.exports = {
 
@@ -16,8 +20,8 @@ module.exports = {
                     },
 
                     auth: {
-                        username: `${process.env.BUNDLE_QUERY_USER}`,
-                        password: `${process.env.BUNDLE_QUERY_PASS}`
+                        username: config.BUNDLE_QUERY_USER,
+                        password: config.BUNDLE_QUERY_PASS
                     }
                 });
             const {internetBundles,reason, status} = data;
@@ -43,6 +47,371 @@ module.exports = {
         }
 
     },
+    checkMsisdnAllowed : async (msisdn) => {
+
+        const url = "http://localhost:8900/checkValid";
+        try {
+            const {data} = await axios.get(url,
+                {
+                    params: {
+                        contactId: msisdn,
+                    },
+
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+    checkRetailorAllowed : async (contactId, distributorId) => {
+
+        const url = "http://localhost:8900/checkValidRetail";
+        try {
+            const {data} = await axios.get(url,
+                {
+                    params: {
+                        contactId,
+                        distributorId
+                    },
+
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
+    changePINRetail : async (acctId,oldPIN, newPIN) => {
+
+        const url = "http://localhost:8900/activate_retail";
+        try {
+            const postData ={
+                acctId,
+                oldPIN,
+                newPIN,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+    changePINDIST : async (acctId,oldPIN, newPIN) => {
+
+        const url = "http://localhost:8900/activate_dist";
+        try {
+            const postData ={
+                acctId,
+                oldPIN,
+                newPIN,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
+    getBalanceRetail : async (acctId, pin) => {
+
+        const url = "http://localhost:8900/balance_retail";
+        try {
+            const {data} = await axios.get(url,
+                {
+                    params: {
+                       acctId,
+                        pin,
+                        channel:"USSD"
+                    },
+
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+    getBalanceDIST : async (acctId, pin) => {
+
+        const url = "http://localhost:8900/balance_dist";
+        try {
+            const {data} = await axios.get(url,
+                {
+                    params: {
+                        acctId,
+                        pin,
+                        channel:"USSD"
+                    },
+
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
+
+    cashTopSubRetail : async (acctId,msisdn,pin,amount,surfContact) => {
+
+        const url = "http://localhost:8900/cash_top_sub";
+        try {
+            const postData ={
+                acctId,
+                pin,
+                msisdn,
+                amount,
+                surfContact:surfContact?surfContact.toString():"",
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+    cashTopRetailDIST : async (acctId,pin,amount,retailorId) => {
+
+        const url = "http://localhost:8900/cash_top_retail";
+        try {
+            const postData ={
+                acctId,
+                pin,
+                amount,
+                retailorId,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
+    checkExisting : async (msisdn) => {
+
+        const url = "http://localhost:8900/checkExisting";
+        try {
+            const {data} = await axios.get(url,
+                {
+                    params: {
+                        contactId: msisdn,
+                    },
+
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+    createRetail : async (distributorId,contactId,pin,firstName,lastName,businessName) => {
+
+        const url = "http://localhost:8900/create_retail";
+        try {
+            const postData ={
+                distributorId,
+                contactId,
+                pin,
+                firstName,
+                lastName,
+                businessName,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
+
+
+    dataTopSubRetail : async (acctId,msisdn,pin,bundleId) => {
+
+        const url = "http://localhost:8900/data_top_retail";
+        try {
+            const postData ={
+                acctId,
+                pin,
+                msisdn,
+                bundleId,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+   resetPIN : async (acctId,type) => {
+
+        const url = "http://localhost:8900/reset_pin";
+        try {
+            const postData ={
+                acctId,
+                type,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+            return data
+
+        } catch (error) {
+            console.log(error)
+            return {
+                status:1,
+                reason:"System Error. Please try again later"
+
+            }
+        }
+
+    },
+
 
 
 }
