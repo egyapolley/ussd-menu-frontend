@@ -19,9 +19,7 @@ module.exports = {
     },
 
     formatMSISDN: (msisdn) => {
-
-        if (msisdn.charAt(0) === '0') msisdn = msisdn.substring(1);
-        return `233${msisdn}`;
+        return `233${msisdn.substring(1)}`;
 
     },
     paginate: (items, page=1, pageSize=4) => {
