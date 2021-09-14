@@ -316,7 +316,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                 const session = getSession(sessionId);
                 session['amount'] = input;
                 menu.con('Cash Top up : ' + session['surflineNumber'] + '' +
-                    '\nAmount: GHC' + input + '\nPress 1 to CONTINUE or 2 to CANCEL')
+                    '\nAmount: GHC' + input + '\n\nPress 1 to CONTINUE \nPress 2 to CANCEL')
             }
 
         },
@@ -454,7 +454,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                 const session = getSession(sessionId);
                 session['amount'] = input;
                 menu.con('Cash Top up : ' + session['retailorNumber']+'('+session['retailName']+')' + '' +
-                    '\nAmount: GHC' + input + '\nPress 1 to CONTINUE or 2 to CANCEL')
+                    '\nAmount: GHC ' + input + '\n\nPress 1 to CONTINUE \nPress 2 to CANCEL')
             }
 
         },
@@ -522,7 +522,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         run: () => {
             let input = menu.val;
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:');
+                menu.con('Invalid PIN: Enter 6-digits PIN:');
             } else {
                 const session = getSession(menu.args.sessionId);
                 session['old_pin'] = input;
@@ -541,7 +541,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         run: () => {
             let input = menu.val;
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:');
+                menu.con('Invalid PIN: Enter 6-digits PIN:');
             } else {
                 const session = getSession(menu.args.sessionId);
                 session['new_pin'] = input;
@@ -560,7 +560,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             const {sessionId} = menu.args
             let input = menu.val
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:')
+                menu.con('Invalid PIN: Enter 6-digits PIN:')
             } else {
                 const session = getSession(sessionId);
                 if (input === session['new_pin']) {
@@ -592,7 +592,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         run: () => {
             let input = menu.val;
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:');
+                menu.con('Invalid PIN: Enter 6-digits PIN:');
             } else {
                 const session = getSession(menu.args.sessionId);
                 session['old_pin'] = input;
@@ -611,7 +611,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         run: () => {
             let input = menu.val;
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:');
+                menu.con('Invalid PIN: Enter 6-digits PIN:');
             } else {
                 const session = getSession(menu.args.sessionId);
                 session['new_pin'] = input;
@@ -630,7 +630,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             const {sessionId} = menu.args
             let input = menu.val
             if (!isPINValid(input)) {
-                menu.con('Invalid PIN Length: Enter 6-digits PIN:')
+                menu.con('Invalid PIN: Enter 6-digits PIN:')
             } else {
                 const session = getSession(sessionId);
                 if (input === session['new_pin']) {
@@ -829,7 +829,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                 session['selectedBundle'] = selectedBundle
                 const {bundle_price, bundle_value} = selectedBundle
                 menu.con('Data Top up : ' + bundle_value + ' on ' + session['surflineNumber'] + '' +
-                    '\nCost: GHC' + bundle_price + '\nPress 1 to CONTINUE or 2 to CANCEL')
+                    '\nCost: GHC ' + bundle_price + '\n\nPress 1 to CONTINUE \nPress 2 to CANCEL')
             }
 
 
@@ -1000,7 +1000,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                     if (retailorStatus.status === 0){
                         session['retailorIdConfirmed'] = true;
                         session['retailorId']=msisdn
-                        menu.con(`SUMMARY:\nName: ${session['firstName']} ${session['lastName']}\nBusiness:${session['businessName']}\nContact:${session['retailorId']}\nPress 1 to CONTINUE or 2 to CANCEL`)
+                        menu.con(`SUMMARY:\nName: ${session['firstName']} ${session['lastName']}\nBusiness:${session['businessName']}\nContact:${session['retailorId']}\n\nPress 1 to CONTINUE \nPress 2 to CANCEL`)
 
                     }else {
                         menu.end(retailorStatus.reason)
@@ -1068,7 +1068,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
     });
 
 
-    app.post('/ussd',passport.authenticate('basic', {session: false}), async function (req, res) {
+    app.post('/ussd', async function (req, res) {
 
 
         const {Type, Mobile, Message, SessionId} = req.body

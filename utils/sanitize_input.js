@@ -13,8 +13,9 @@ module.exports = {
     },
     isPINValid: (pin) => {
         pin = pin.trim().replace(/\\s+/g, "");
-        pin = pin && Number(pin);
-        return pin && pin.toString().length === 6;
+        let regex =/[0-9]{6}/
+        if (pin.length !== 6) return false
+        return regex.test(pin)
 
     },
 
