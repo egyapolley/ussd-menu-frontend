@@ -351,7 +351,7 @@ module.exports = {
 
 
 
-    dataTopSubRetail : async (acctId,msisdn,pin,bundleId) => {
+    dataTopSubRetail : async (acctId,msisdn,pin,bundleId,bundle_cost,bundle_value) => {
 
         const url = "http://localhost:8900/data_top_retail";
         try {
@@ -360,6 +360,8 @@ module.exports = {
                 pin,
                 msisdn,
                 bundleId,
+                bundle_cost,
+                bundle_value,
                 channel:'USSD'
 
             }

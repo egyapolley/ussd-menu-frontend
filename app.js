@@ -878,8 +878,8 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                 session['phoneContact'] = menu.args.phoneNumber.toString().replace('+', '');
                 session['surflineNumber'] = `233${session['surflineNumber'].substring(1)}`
 
-                const {bundle_value, bundle_id} = session['selectedBundle']
-                const result = await restApi.dataTopSubRetail(session['phoneContact'], session['surflineNumber'], session['pin'], bundle_id)
+                const {bundle_value, bundle_id,bundle_price} = session['selectedBundle']
+                const result = await restApi.dataTopSubRetail(session['phoneContact'], session['surflineNumber'], session['pin'], bundle_id,bundle_price,bundle_value)
                 if (result.status === 0) menu.end(`${bundle_value} successfully purchased on ${session['surflineNumber']}. Thank you`)
                 else menu.end(result.reason)
             }
