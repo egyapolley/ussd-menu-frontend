@@ -113,14 +113,14 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                         '\n1) Check Your Balance' +
                         '\n2) Add New Retailor' +
                         '\n3) Transfer Cash' +
-                        '\n4) Change PIN');
+                        '\n4) Reset PIN');
 
                 } else {
                     menu.con('SURFLINE. Choose option:' +
                         '\n1) Check Your Balance' +
                         '\n2) Transfer Cash' +
                         '\n3) Buy Bundle' +
-                        '\n4) Change PIN');
+                        '\n4) Reset PIN');
 
                 }
 
