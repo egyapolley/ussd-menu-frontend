@@ -414,6 +414,34 @@ module.exports = {
 
     },
 
+    checkPINValid : async (acctId,pin,type) => {
+
+        const url = "http://localhost:8900/checkPINValid";
+        try {
+            const postData ={
+                acctId,
+                pin,
+                type,
+                channel:'USSD'
+
+            }
+            const {data} = await axios.post(url,postData,
+                {
+                    auth: {
+                        username:config.USSD_USER,
+                        password:config.USSD_PASS
+                    }
+                });
+           const {status} = data
+            return (status===0)
+
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+
+    },
+
 
 
 }

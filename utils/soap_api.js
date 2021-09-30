@@ -1,6 +1,8 @@
 const soapRequest = require("easy-soap-request");
 const parser = require('fast-xml-parser');
 const he = require('he');
+
+const {PI_USER, PI_ENDPOINT, PI_PASS} = require("./settings")
 const options = {
     attributeNamePrefix: "@_",
     attrNodeName: "attr", //default is 'false'
@@ -37,12 +39,12 @@ module.exports = {
                 'Authorization': 'Basic YWlhb3NkMDE6YWlhb3NkMDE='
             };
 
-            let xmlBody = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:mgm="http://SCLINSMSVM01P/wsdls/Surfline/MGMGetReferralAcctInfo.wsdl">
+            let xmlBody = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:get="http://SCLINSMSVM01P/wsdls/Surfline/GetStatusNContact.wsdl">
    <soapenv:Header/>
    <soapenv:Body>
-      <mgm:MGMGetReferralAcctInfoRequest>
+      <get:GetStatusNContactRequest>
          <CC_Calling_Party_Id>${msisdn}</CC_Calling_Party_Id>
-      </mgm:MGMGetReferralAcctInfoRequest>
+      </get:GetStatusNContactRequest>
    </soapenv:Body>
 </soapenv:Envelope>`;
 
@@ -52,8 +54,8 @@ module.exports = {
             let jsonObj = parser.parse(body, options);
             let jsonResult = jsonObj.Envelope.Body;
             let result = {}
-            if (jsonResult.MGMGetReferralAcctInfoResult && jsonResult.MGMGetReferralAcctInfoResult.Result) {
-                result.contact = jsonResult.MGMGetReferralAcctInfoResult.Result
+            if (jsonResult.GetStatusNContactResult && jsonResult.GetStatusNContactResult.Result === 'success') {
+                result.contact = jsonResult.GetStatusNContactResult.Result2
                 result.success = true;
 
 
@@ -74,5 +76,6 @@ module.exports = {
         }
 
     }
+
 
 }

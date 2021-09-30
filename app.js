@@ -111,7 +111,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                     session['distributor'] =true
                     menu.con('SURFLINE. Choose option:' +
                         '\n1) Check Your Balance' +
-                        '\n2) Add New Retailor' +
+                        '\n2) Add New Retailer' +
                         '\n3) Transfer Cash' +
                         '\n4) Reset PIN');
 
@@ -377,7 +377,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
 
         run: () => {
 
-            menu.con('Enter Retailor number:');
+            menu.con('Enter Retailer number:');
         },
         next: {
             '*\\d+': 'cashTopUpDIST.number'
@@ -388,11 +388,11 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             const {sessionId} = menu.args
             let input = menu.val
             if (!isMsisdnValid(input)) {
-                menu.con('Invalid number. Please enter a Valid Retailor number')
+                menu.con('Invalid number. Please enter a Valid Retailer number')
             } else {
                 const session = getSession(sessionId);
                 session['retailorNumber'] = input;
-                menu.con('Confirm  Retailor number:')
+                menu.con('Confirm  Retailer number:')
             }
 
 
@@ -409,7 +409,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             const {sessionId} = menu.args
             let input = menu.val
             if (!isMsisdnValid(input)) {
-                menu.con('Invalid number. Please enter a Retailor number starting')
+                menu.con('Invalid number. Please enter a Retailer number starting')
             } else {
                 const session = getSession(sessionId);
                 if (input === session['retailorNumber']) {
@@ -519,12 +519,14 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         }
     });
     menu.state('changePIN.oldPIN', {
-        run: () => {
+        run: async () => {
             let input = menu.val;
-            if (!isPINValid(input)) {
-                menu.con('Invalid PIN: Enter 6-digits PIN:');
+            const session = getSession(menu.args.sessionId);
+            session['phoneContact'] = menu.args.phoneNumber.toString().replace('+', '');
+            const isOldPINValid = await restApi.checkPINValid(session['phoneContact'], input, session['acctType'])
+            if (!isOldPINValid) {
+                menu.end('PIN entered is invalid. Please try again or call our Call Centre for assistance.Thank you');
             } else {
-                const session = getSession(menu.args.sessionId);
                 session['old_pin'] = input;
                 menu.con('Enter New PIN:')
             }
@@ -589,12 +591,14 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
         }
     });
     menu.state('changePINDIST.oldPIN', {
-        run: () => {
+        run: async () => {
             let input = menu.val;
-            if (!isPINValid(input)) {
-                menu.con('Invalid PIN: Enter 6-digits PIN:');
+            const session = getSession(menu.args.sessionId);
+            session['phoneContact'] = menu.args.phoneNumber.toString().replace('+', '');
+            const isOldPINValid = await restApi.checkPINValid(session['phoneContact'], input, session['acctType'])
+            if (!isOldPINValid) {
+                menu.end('PIN entered is invalid. Please try again or call our Call Centre for assistance.Thank you');
             } else {
-                const session = getSession(menu.args.sessionId);
                 session['old_pin'] = input;
                 menu.con('Enter New PIN:')
             }
@@ -893,7 +897,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
 
         run: () => {
 
-            menu.con('Enter Retailor First Name:');
+            menu.con('Enter Retailer First Name:');
         },
         next: {
             '*[a-zA-Z]+': 'AddNewRetailorDIST.firstName'
@@ -908,7 +912,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             } else {
                 const session = getSession(sessionId);
                 session['firstName'] = input;
-                menu.con('Enter Retailor Last Name:')
+                menu.con('Enter Retailer Last Name:')
             }
 
 
@@ -929,7 +933,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             } else {
                 const session = getSession(sessionId);
                 session['lastName'] = input;
-                menu.con('Enter Retailor Business Name:')
+                menu.con('Enter Retailer Business Name:')
 
             }
 
@@ -950,7 +954,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             } else {
                 const session = getSession(sessionId);
                 session['businessName'] = input;
-                menu.con('Enter Retailor Phone Contact:')
+                menu.con('Enter Retailer Phone Contact:')
 
             }
 
@@ -971,7 +975,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
             } else {
                 const session = getSession(sessionId);
                 session['retailorId'] = input;
-                menu.con('Confirm  Retailor Phone Number:')
+                menu.con('Confirm  Retailer Phone Number:')
             }
 
 
@@ -1059,7 +1063,7 @@ mongoose.connect("mongodb://localhost/ussd-hubtel-frontend", {
                 const [pin,distributorId,contactId,firstName,lastName,businessName] =[session['pin'],session['phoneContact'],session['retailorId'],session['firstName'],session['lastName'],session['businessName']]
 
                 const result = await restApi.createRetail(distributorId,contactId,pin,firstName,lastName,businessName)
-                if (result.status === 0) menu.end(`Retailor Number ${session['retailorId']}(${session['businessName']}) successfully created. Thank you `)
+                if (result.status === 0) menu.end(`Retailer Number ${session['retailorId']}(${session['businessName']}) successfully created. Thank you `)
                 else menu.end(result.reason)
 
             }
